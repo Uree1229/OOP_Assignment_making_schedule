@@ -15,6 +15,7 @@ using namespace std;
 #define USER_LIST "UserList.txt"
 
 //global variables
+
 ifstream ifs;
 static string STUDENT_ID;
 static string STUDENT_PWD;
@@ -24,9 +25,11 @@ static int mode = 0; // 0 : default, 1: login, 2: register
 
 //class User
 class Account {
+
 private:
 	string ID;
 	string passwd;
+
 public:
 	 string get_ID() const{ return this->ID; }
 	 string get_PWD() const { return this->passwd; }
@@ -35,19 +38,22 @@ public:
 };
 
 class User {
+
 private:
 	Account account;
+
 public :
-	 Account get_account() const{
-		return this->account;
-	}
+	 Account get_account() const{ return this->account; }
 	 void set_ACCOUNT(Account account) { this->account = account; }
 };
 class User_DB{
+
+private:	
 	vector <User> DB;
 
 public:
 	bool find_user(string name) {
+
 		vector <User> :: iterator i;
 		for (i = DB.begin(); i != DB.end(); i++) {
 			if (i->get_account().get_ID() == name) {
@@ -56,6 +62,7 @@ public:
 		}
 		return false;
 	}
+
 	vector <User> ::iterator find_index_user(string name) {
 		vector <User> ::iterator i;
 		for (i = DB.begin(); i != DB.end(); i++) {
@@ -65,12 +72,14 @@ public:
 		}
 		return this->DB.end();
 	}
-	void append_User(User user) {
-		DB.push_back(user);
-	}
+	void append_User(User user) {DB.push_back(user);}
 };
 
+//global variables 2
+
 User_DB main_DB;
+
+//functions
 
 vector <string> tokenize(string context, char target) {
 	vector <string> token;
@@ -87,6 +96,7 @@ vector <string> tokenize(string context, char target) {
 void control_user_list() {
 
 }
+
 void login_menu() {
 
 	cout << "Enter UserID\n> ";
@@ -111,6 +121,7 @@ void login_menu() {
 }
 
 void register_menu() {
+	
 	User user;
 	Account account;
 
@@ -159,14 +170,17 @@ void start_menu(int cmd) {
 	case 2:
 		register_menu();
 		break;
-
+	case 3:
+		exit(1);
+		break;
 	default:
-		cout << "It's wrong Input\n1.login 2.register\n> ";
+		cout << "It's wrong Input\n1.login 2.register 3. exit\n> ";
 		break;
 	}
 }
 
 void setup(User_DB & db) {
+
 	string file_name = USER_LIST;
 	ifstream ifs1;
 	ifs.open(file_name);
@@ -179,7 +193,7 @@ void setup(User_DB & db) {
 		bool find = false;
 		//cout << "Open " + file_name <<endl;
 			while (getline(ifs, str)) {
-				if (!str.empty()) {  // ºñ¾îÀÖÁö ¾ÊÀº °æ¿ì¸¸ Ã³¸®
+				if (!str.empty()) {  // ë¹„ì–´ìžˆì§€ ì•Šì€ ê²½ìš°ë§Œ ì²˜ë¦¬
 					token = tokenize(str, ' ');
 					account.set_ID(token[0]);
 					account.set_PWD(token[1]);
@@ -187,13 +201,13 @@ void setup(User_DB & db) {
 					db.append_User(user);
 				}
 		}
-
 	}
 	else {
 		cout << "**ERROR : File Name is wrong**" << endl;
 	}
 	ifs.close();
 }
+
 int main(void) {
 
 	setup(main_DB);
@@ -204,7 +218,6 @@ int main(void) {
 		start_menu(cmd);
 		
 	}
-
 
 	return 0;
 }
