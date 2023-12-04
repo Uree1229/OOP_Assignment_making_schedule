@@ -21,7 +21,7 @@ ifstream ifs;
 static string STUDENT_ID;
 static string STUDENT_PWD;
 static int mode = 0; // 0 : default, 1: login, 2: register 
-
+static bool temp_reg = false;
 
 
 //class User
@@ -81,6 +81,34 @@ public:
 User_DB main_DB;
 
 //functions
+
+class day {
+
+	int date;
+	int num;
+	sf::RenderWindow days_window;
+	sf::RectangleShape asd;
+
+
+};
+
+class month {
+
+	int first_dow; //"day of week : 다른 날짜들 요일 계산 가능"
+	day dates[31];
+	sf::RenderWindow months_window;
+
+public:
+	void draws() {
+		for (int i = 0; i < 31; i++) {
+			months_window.draw(dates[i].);
+		}
+
+	}
+};
+
+
+
 
 vector <string> tokenize(string context, char target) {
 	vector <string> token;
@@ -230,6 +258,77 @@ bool login_menu(const string& idInput, const string& pwInput) {
 	}
 }
 
+void Schedule_menu() {
+	sf::RenderWindow window(sf::VideoMode(1600, 1200), "My Calendar");
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+		}
+
+		window.clear(sf::Color::White);
+		window.display();
+	}
+}
+
+int Register_menu() {
+
+	sf::RenderWindow registerWindow(sf::VideoMode(820, 500), "Register");
+	sf::Font font;
+	if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf"))
+		return -1;
+	//-----------------------------Register Field-------------------------------------
+	sf::Text registerIdText("ID: ", font, 40);
+	registerIdText.setFillColor(sf::Color::Black);
+	registerIdText.setPosition(150, 50);
+
+	sf::RectangleShape registerIdBox(sf::Vector2f(400, 50));
+	registerIdBox.setPosition(250, 50);
+	registerIdBox.setFillColor(sf::Color::White);
+	registerIdBox.setOutlineColor(sf::Color::Black);
+	registerIdBox.setOutlineThickness(2.0f);
+
+	sf::Text registerIdString("", font, 40);
+	registerIdString.setFillColor(sf::Color::Black);
+	registerIdString.setPosition(260, 45);
+
+	// PW 입력 필드, 버튼 등을 생성
+	sf::Text registerPwText("PW: ", font, 40);
+	registerPwText.setFillColor(sf::Color::Black);
+	registerPwText.setPosition(150, 150);
+
+	sf::RectangleShape registerPwBox(sf::Vector2f(400, 50));
+	registerPwBox.setPosition(250, 150);
+	registerPwBox.setFillColor(sf::Color::White);
+	registerPwBox.setOutlineColor(sf::Color::Black);
+	registerPwBox.setOutlineThickness(2.0f);
+
+	sf::Text registerPwString("", font, 40);
+	registerPwString.setFillColor(sf::Color::Black);
+	registerPwString.setPosition(260, 145);
+
+	// PW 재입력 필드, 버튼 등을 생성
+	sf::Text registerPwConfirmText("Confirm PW: ", font, 40);
+	registerPwConfirmText.setFillColor(sf::Color::Black);
+	registerPwConfirmText.setPosition(10, 250);
+
+	sf::RectangleShape registerPwConfirmBox(sf::Vector2f(400, 50));
+	registerPwConfirmBox.setPosition(250, 250);
+	registerPwConfirmBox.setFillColor(sf::Color::White);
+	registerPwConfirmBox.setOutlineColor(sf::Color::Black);
+	registerPwConfirmBox.setOutlineThickness(2.0f);
+
+	sf::Text registerPwConfirmString("", font, 40);
+	registerPwConfirmString.setFillColor(sf::Color::Black);
+	registerPwConfirmString.setPosition(260, 245);
+	sf::Vector2i mousPosReg = sf::Mouse::getPosition(registerWindow);
+	sf::Vector2f worldPosReg = registerWindow.mapPixelToCoords(mousPosReg);
+
+
+}
 
 int main(void) {
 
@@ -239,16 +338,9 @@ int main(void) {
 	string idInput;
 	string pwInput;
 	string confirmPwInput;
-	//while (true) {
-	//	cout << "1.login 2.register\n> ";
-	//	cin >> cmd;
-	//	start_menu(cmd);
 
-	//}
 
-	sf::RenderWindow window(sf::VideoMode(1600, 1200), "My Calendar");
 	sf::RenderWindow login(sf::VideoMode(820, 500), "Login");
-	sf::RenderWindow registerWindow(sf::VideoMode(820, 500), "Register");
 	sf::Font font;
 	if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf"))
 		return -1;
@@ -309,51 +401,6 @@ int main(void) {
 
 	sf::Text* focusedText = NULL;
 
-	//-----------------------------Register Field-------------------------------------
-	sf::Text registerIdText("ID: ", font, 40);
-	registerIdText.setFillColor(sf::Color::Black);
-	registerIdText.setPosition(150, 50);
-
-	sf::RectangleShape registerIdBox(sf::Vector2f(400, 50));
-	registerIdBox.setPosition(250, 50);
-	registerIdBox.setFillColor(sf::Color::White);
-	registerIdBox.setOutlineColor(sf::Color::Black);
-	registerIdBox.setOutlineThickness(2.0f);
-
-	sf::Text registerIdString("", font, 40);
-	registerIdString.setFillColor(sf::Color::Black);
-	registerIdString.setPosition(260, 45);
-
-	// PW 입력 필드, 버튼 등을 생성
-	sf::Text registerPwText("PW: ", font, 40);
-	registerPwText.setFillColor(sf::Color::Black);
-	registerPwText.setPosition(150, 150);
-
-	sf::RectangleShape registerPwBox(sf::Vector2f(400, 50));
-	registerPwBox.setPosition(250, 150);
-	registerPwBox.setFillColor(sf::Color::White);
-	registerPwBox.setOutlineColor(sf::Color::Black);
-	registerPwBox.setOutlineThickness(2.0f);
-
-	sf::Text registerPwString("", font, 40);
-	registerPwString.setFillColor(sf::Color::Black);
-	registerPwString.setPosition(260, 145);
-
-	// PW 재입력 필드, 버튼 등을 생성
-	sf::Text registerPwConfirmText("Confirm PW: ", font, 40);
-	registerPwConfirmText.setFillColor(sf::Color::Black);
-	registerPwConfirmText.setPosition(10, 250);
-
-	sf::RectangleShape registerPwConfirmBox(sf::Vector2f(400, 50));
-	registerPwConfirmBox.setPosition(250, 250);
-	registerPwConfirmBox.setFillColor(sf::Color::White);
-	registerPwConfirmBox.setOutlineColor(sf::Color::Black);
-	registerPwConfirmBox.setOutlineThickness(2.0f);
-
-	sf::Text registerPwConfirmString("", font, 40);
-	registerPwConfirmString.setFillColor(sf::Color::Black);
-	registerPwConfirmString.setPosition(260, 245);
-
 	// Confirm 버튼 생성
 	sf::RectangleShape confirmButton(sf::Vector2f(200, 100));
 	confirmButton.setPosition(310, 350);
@@ -365,19 +412,15 @@ int main(void) {
 	confirmText.setFillColor(sf::Color::Black);
 	confirmText.setPosition(340, 375);
 
-	//registerWindow.close();
+
 	bool temp = false;
-	bool temp_reg = false;
-	//registerWindow.close();
-	//로그인창
+
 	while (login.isOpen())
 	{
 		sf::Event event;
 		sf::Vector2i mousPos = sf::Mouse::getPosition(login);
 		sf::Vector2f worldPos = login.mapPixelToCoords(mousPos);
 
-		sf::Vector2i mousPosReg = sf::Mouse::getPosition(registerWindow);
-		sf::Vector2f worldPosReg = registerWindow.mapPixelToCoords(mousPos);
 
 		while (login.pollEvent(event))
 		{
@@ -414,7 +457,7 @@ int main(void) {
 			}
 			else if (event.type == sf::Event::MouseButtonPressed)	//어떤 박스 클릭인지 색깔로 구분
 			{
-				
+
 
 				if (idBox.getGlobalBounds().contains(worldPos))
 				{
@@ -451,117 +494,28 @@ int main(void) {
 					pwBox.setOutlineColor(sf::Color::Black);
 				}
 			}
+			//
+
 			if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 				if (temp) {
 					if (loginButton.getGlobalBounds().contains(worldPos)) {
 						loginButton.setFillColor(sf::Color(240, 240, 240));
-						bool loginSuccess = login_menu(idInput, pwInput); 
+						bool loginSuccess = login_menu(idInput, pwInput);
 						if (loginSuccess) {
 							login.close();
 							connect = true;
+							temp = false;
+							temp_reg = true;
 						}
 					}
 					else if (registerButton.getGlobalBounds().contains(worldPos)) {
 						registerButton.setFillColor(sf::Color(240, 240, 240));
 					}
-					temp_reg = false;
-				}
-				if (temp_reg) {
-					if (registerButton.getGlobalBounds().contains(worldPos)) {
-						registerButton.setFillColor(sf::Color(240, 240, 240));
-						login.close();
-						//registerWindow.display();
-						// 회원가입 창 표시
-						while (registerWindow.isOpen()) {
-							sf::Event registerEvent;
-							
-							while (registerWindow.pollEvent(registerEvent)) {
-								if (registerEvent.type == sf::Event::Closed) {
-									registerWindow.close();
-								}
-								else if (registerEvent.type == sf::Event::TextEntered) {
-									if (registerEvent.text.unicode < 128) {
-										if (registerEvent.text.unicode == 8) { // handle backspace
-											if (!idInput.empty() && focusedText == &registerIdString)
-												idInput.pop_back();
-											else if (!pwInput.empty() && focusedText == &registerPwString)
-												pwInput.pop_back();
-											else if (!confirmPwInput.empty() && focusedText == &registerPwConfirmString)
-												confirmPwInput.pop_back();
-										}
-										else if (registerEvent.text.unicode != 13) { // handle normal characters
-											if (focusedText == &registerIdString)
-												idInput += static_cast<char>(registerEvent.text.unicode);
-											else if (focusedText == &registerPwString)
-												pwInput += static_cast<char>(registerEvent.text.unicode);
-											else if (focusedText == &registerPwConfirmString)
-												confirmPwInput += static_cast<char>(registerEvent.text.unicode);
-										}
-									}
-
-									registerIdString.setString(idInput);
-									registerPwString.setString(string(pwInput.length(), '*'));
-									registerPwConfirmString.setString(string(confirmPwInput.length(), '*'));
-								}
-								else if (registerEvent.type == sf::Event::MouseButtonPressed) {
-									if (registerEvent.mouseButton.button == sf::Mouse::Left) {
-
-										if (registerIdBox.getGlobalBounds().contains(worldPosReg)) {
-											registerIdBox.setOutlineColor(sf::Color::Red);
-											registerPwBox.setOutlineColor(sf::Color::Black);
-											registerPwConfirmBox.setOutlineColor(sf::Color::Black);
-											focusedText = &registerIdString;
-										}
-										else if (registerPwBox.getGlobalBounds().contains(worldPosReg)) {
-											registerIdBox.setOutlineColor(sf::Color::Black);
-											registerPwBox.setOutlineColor(sf::Color::Red);
-											registerPwConfirmBox.setOutlineColor(sf::Color::Black);
-											focusedText = &registerPwString;
-										}
-										else if (registerPwConfirmBox.getGlobalBounds().contains(worldPosReg)) {
-											registerIdBox.setOutlineColor(sf::Color::Black);
-											registerPwBox.setOutlineColor(sf::Color::Black);
-											registerPwConfirmBox.setOutlineColor(sf::Color::Red);
-											focusedText = &registerPwConfirmString;
-										}
-										else if (confirmButton.getGlobalBounds().contains(worldPosReg)) {
-											// Handle register confirmation
-											if (pwInput == confirmPwInput) {
-												// TODO: Add code here to store the new user in your user database
-												std::cout << "Registration successful for user: " << idInput << std::endl;
-												registerWindow.close();
-											}
-											else {
-												std::cout << "Passwords do not match" << std::endl;
-											}
-										}
-									}
-								}
-							}
-
-							registerWindow.clear(sf::Color(218, 218, 218));
-							registerWindow.draw(registerIdBox);
-							registerWindow.draw(registerIdText);
-							registerWindow.draw(registerIdString);
-							registerWindow.draw(registerPwBox);
-							registerWindow.draw(registerPwText);
-							registerWindow.draw(registerPwString);
-							registerWindow.draw(confirmButton);
-							registerWindow.draw(confirmText);
-							registerWindow.draw(registerPwConfirmBox);
-							registerWindow.draw(registerPwConfirmString);
-							registerWindow.draw(registerPwConfirmText);
-
-							registerWindow.display();
-						}
-					}
-					else if (loginButton.getGlobalBounds().contains(worldPos)) {
-						loginButton.setFillColor(sf::Color(240, 240, 240));
-					}
 					temp = false;
 				}
+
 			}
-			
+
 
 		}
 
@@ -575,24 +529,14 @@ int main(void) {
 		login.draw(loginButton);
 		login.draw(textButton);
 		login.draw(registerButton);
-		login.draw(registerText);;
-		
+		login.draw(registerText);
+
 		login.display();
 	}
+
 	if (connect)
 	{
-		while (window.isOpen())
-		{
-			sf::Event event;
-			while (window.pollEvent(event))
-			{
-				if (event.type == sf::Event::Closed)
-					window.close();
-			}
-
-			window.clear(sf::Color::White);
-			window.display();
-		}
+		Schedule_menu();
 	}
 
 
