@@ -20,7 +20,7 @@ using namespace std;
 ifstream ifs;
 
 static int mode = 0; // 0 : default, 1: login, 2: register 
-static bool temp_reg = false;
+
 string EXTERN_STUDENT_ID;
 static bool connect;
 static bool reg;
@@ -96,89 +96,6 @@ std::vector <string> tokenize(string context, char target) {
 }
 
 
-
-void login_menu() {
-
-	cout << "Enter UserID\n> ";
-	cin >> STUDENT_ID;
-	cin.ignore();
-	if (main_DB.find_user(STUDENT_ID) == false) {
-		cout << "**ERROR : UserID is wrong**";
-	}
-	else {
-		cout << "Enter Password\n> ";
-		string pwd;
-		cin >> pwd;
-		cin.ignore();
-		if (main_DB.find_index_user(STUDENT_ID)->get_account().get_PWD() == pwd) {
-			cout << "login success\n";
-		}
-		else {
-			cout << "Wrong passwd\n";
-
-		}
-	}
-}
-
-void register_menu() {
-
-	User user;
-	Account account;
-
-	string check_pwd;
-
-	cout << "Register_menu\n\nPlease enter ID you want\n> ";
-	cin >> STUDENT_ID;
-	cin.ignore();
-	if (main_DB.find_user(STUDENT_ID) == true) {
-		cout << "ERROR : That ID is Already existed\n" << endl;
-	}
-	else {
-		cout << "Please enter PASSWORD you want\n> ";
-		cin >> STUDENT_PWD;
-		cin.ignore();
-		while (STUDENT_PWD != check_pwd) {
-			cout << "Please enter PASSWORD one more time\n> ";
-			cin >> check_pwd;
-			cin.ignore();
-			if (STUDENT_PWD != check_pwd)cout << "ERROR : Password is not coincide\n" << endl;
-		}
-		cout << "success";
-
-		account.set_ID(STUDENT_ID);
-		account.set_PWD(STUDENT_PWD);
-		user.set_ACCOUNT(account);
-		main_DB.append_User(user);
-
-		string user_set = "\n" + STUDENT_ID + " " + STUDENT_PWD;
-		ofstream ofs;
-		ofs.open(USER_LIST, ios::app); // Open file in append mode
-		if (ofs.is_open()) {
-			ofs << user_set << endl; // Use << operator to write string
-		}
-		ofs.close();
-	}
-}
-
-void start_menu(int cmd) {
-
-	switch (cmd) {
-	case 1:
-		login_menu();
-		break;
-
-	case 2:
-		register_menu();
-		break;
-	case 3:
-		exit(1);
-		break;
-	default:
-		cout << "It's wrong Input\n1.login 2.register 3. exit\n> ";
-		break;
-	}
-}
-
 void setup(User_DB& db) {
 
 	string file_name = USER_LIST;
@@ -193,7 +110,7 @@ void setup(User_DB& db) {
 		bool find = false;
 		//cout << "Open " + file_name <<endl;
 		while (getline(ifs, str)) {
-			if (!str.empty()) {  // ºñ¾îÀÖÁö ¾Ê: °æ¿츸 ó¸®
+			if (!str.empty()) {  // 비어있지 않은 경우만 처리
 				token = tokenize(str, ' ');
 				account.set_ID(token[0]);
 				account.set_PWD(token[1]);
@@ -260,6 +177,8 @@ int Register_menu() {
 	string idInput;
 	string pwInput;
 	string confirmPwInput;
+	string pwStar;
+	string confirmpwStar;
 
 	sf::RenderWindow registerWindow(sf::VideoMode(820, 500), "Register");
 	sf::Font font;
@@ -280,7 +199,7 @@ int Register_menu() {
 	registerIdString.setFillColor(sf::Color::Black);
 	registerIdString.setPosition(260, 45);
 
-	// PW ÀԷÂ Çʵå, ¹öư µî; »ý¼º
+	// PW 입력 필드, 버튼 등을 생성
 	sf::Text registerPwText("PW: ", font, 40);
 	registerPwText.setFillColor(sf::Color::Black);
 	registerPwText.setPosition(150, 150);
@@ -295,7 +214,7 @@ int Register_menu() {
 	registerPwString.setFillColor(sf::Color::Black);
 	registerPwString.setPosition(260, 145);
 
-	// PW ÀçÀԷÂ Çʵå, ¹öư µî; »ý¼º
+	// PW 재입력 필드, 버튼 등을 생성
 	sf::Text registerPwConfirmText("Confirm PW: ", font, 40);
 	registerPwConfirmText.setFillColor(sf::Color::Black);
 	registerPwConfirmText.setPosition(10, 250);
@@ -310,7 +229,7 @@ int Register_menu() {
 	registerPwConfirmString.setFillColor(sf::Color::Black);
 	registerPwConfirmString.setPosition(260, 245);
 
-	// Confirm ¹öư »ý¼º
+	// Confirm 버튼 생성
 	sf::RectangleShape confirmButton(sf::Vector2f(200, 100));
 	confirmButton.setPosition(310, 350);
 	confirmButton.setFillColor(sf::Color(240, 240, 240));
@@ -330,54 +249,18 @@ int Register_menu() {
 			sf::Event event;
 			sf::Vector2i mousPos = sf::Mouse::getPosition(registerWindow);
 			sf::Vector2f worldPos = registerWindow.mapPixelToCoords(mousPos);
-
+			
 
 			while (registerWindow.pollEvent(event))
 			{
+
+
 				if (event.type == sf::Event::Closed){
 					registerWindow.close();
 					reg = false;
-				}	
-				else if (event.type == sf::Event::TextEntered)		//ÅؽºƮ ÀԷÂ ±¸Çö
-				{
-					{
-						if (event.text.unicode < 128)
-						{
-							if (event.text.unicode == 8)
-							{
-								if (focusedText == &registerIdString)
-									if (!idInput.empty()) idInput.pop_back();
-							
-								else if (focusedText == &registerPwString)
-									if (!pwInput.empty()) pwInput.pop_back();
-								
-								else if (focusedText == &registerPwConfirmString) 
-									if (!confirmPwInput.empty()) confirmPwInput.pop_back();
-							
-							}
-							else if (event.text.unicode != 13){
-								if (focusedText == &registerIdString){
-									idInput += static_cast<char>(event.text.unicode);
-									registerIdString.setString(idInput);
-								}
-								else if (focusedText == &registerPwString){
-									pwInput += static_cast<char>(event.text.unicode);
-									registerPwString.setString(string(pwInput.length(), '*'));
-								}
-								else if (focusedText == &registerPwConfirmString){
-									confirmPwInput += static_cast<char>(event.text.unicode);
-									registerPwConfirmString.setString(string(confirmPwInput.length(), '*'));
-								}
-							}
-						}
-	
-					}
-
 				}
-				else if (event.type == sf::Event::MouseButtonPressed)	//¾ ¹ڽº Ŭ¸¯ÀÎÁö »ö±ò·Î ±¸ºÐ
+				if (event.type == sf::Event::MouseButtonPressed)	//어떤 박스 클릭인지 색깔로 구분
 				{
-
-
 					if (registerIdBox.getGlobalBounds().contains(worldPos))
 					{
 						registerIdBox.setOutlineColor(sf::Color::Red);
@@ -416,6 +299,49 @@ int Register_menu() {
 
 					}
 				}
+				else if (event.type == sf::Event::TextEntered)		//텍스트 입력 구현
+				{
+					{
+
+
+						if (event.text.unicode < 128)
+						{
+							if (event.text.unicode == 8)
+							{
+								if (focusedText == &registerIdString){
+									if (!idInput.empty()) idInput.pop_back();
+								}
+								else if (focusedText == &registerPwString){
+									if (!pwInput.empty()) pwInput.pop_back();
+								}
+								else if (focusedText == &registerPwConfirmString){
+									if (!confirmPwInput.empty()) confirmPwInput.pop_back();
+								}
+							}
+							else if (event.text.unicode != 13) {
+								if (focusedText == &registerIdString) {
+									idInput += static_cast<char>(event.text.unicode);
+									
+								}
+								else if (focusedText == &registerPwString) {
+									pwInput += static_cast<char>(event.text.unicode);
+									
+								}
+								else if (focusedText == &registerPwConfirmString) {
+									confirmPwInput += static_cast<char>(event.text.unicode);
+
+								}
+							}
+
+						}
+						if (focusedText == &registerIdString)	 registerIdString.setString(idInput);
+						else if (focusedText == &registerPwString) registerPwString.setString(string(pwInput.length(), '*'));
+						else if (focusedText == &registerPwConfirmString) registerPwConfirmString.setString(string(confirmPwInput.length(), '*'));
+
+
+					}
+				}
+				
 				if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 					if (temp) {
 						if (confirmButton.getGlobalBounds().contains(worldPos)) {
@@ -446,9 +372,12 @@ int Register_menu() {
 			registerWindow.draw(registerIdBox);
 			registerWindow.draw(registerIdText);
 			registerWindow.draw(registerIdString);
+
 			registerWindow.draw(registerPwBox);
 			registerWindow.draw(registerPwText);
 			registerWindow.draw(registerPwString);
+
+
 			registerWindow.draw(registerPwConfirmBox);
 			registerWindow.draw(registerPwConfirmText);
 			registerWindow.draw(registerPwConfirmString);
@@ -474,38 +403,38 @@ int main_menu() {
 		return -1;
 
 	//-----------------------------logind Field-------------------------------------
-	//ID ¸޼¼Áö ºκÐ
+	//ID 메세지 부분
 	sf::Text idText("ID: ", font, 40);
 	idText.setFillColor(sf::Color::Black);
 	idText.setPosition(150, 100);
-	//ID ÀԷÂ ¹ڽº
+	//ID 입력 박스
 	sf::RectangleShape idBox(sf::Vector2f(400, 50));
 	idBox.setPosition(250, 100);
 	idBox.setFillColor(sf::Color::White);
 	idBox.setOutlineColor(sf::Color::Black);
 	idBox.setOutlineThickness(2.0f);
-	//ID ÅؽºƮ 
+	//ID 텍스트 
 	sf::Text idString("", font, 40);
 	idString.setFillColor(sf::Color::Black);
 	idString.setPosition(260, 95);
 
-	//PW ¸޽ÃÁö ºκÐ
+	//PW 메시지 부분
 	sf::Text pwText("PW: ", font, 40);
 	pwText.setFillColor(sf::Color::Black);
 	pwText.setPosition(150, 200);
-	//PW ÀԷÂ ¹ڽº
+	//PW 입력 박스
 	sf::RectangleShape pwBox(sf::Vector2f(400, 50));
 	pwBox.setPosition(250, 250);
 	pwBox.setFillColor(sf::Color::White);
 	pwBox.setOutlineColor(sf::Color::Black);
 	pwBox.setOutlineThickness(2.0f);
-	//PW ÅؽºƮ
+	//PW 텍스트
 	sf::Text pwString("", font, 40);
 	pwString.setFillColor(sf::Color::Black);
 	pwString.setPosition(260, 245);
 
 
-	// Register ¹öư
+	// Register 버튼
 	sf::RectangleShape registerButton(sf::Vector2f(200, 100));
 	registerButton.setPosition(550, 350);
 	registerButton.setFillColor(sf::Color(240, 240, 240));
@@ -516,7 +445,7 @@ int main_menu() {
 	registerText.setFillColor(sf::Color::Black);
 	registerText.setPosition(580, 375);
 
-	//·α×ÀÎ ¹öư
+	//로그인 버튼
 	sf::RectangleShape loginButton(sf::Vector2f(200, 100));
 	loginButton.setPosition(310, 350);
 	loginButton.setFillColor(sf::Color(240, 240, 240));
@@ -529,8 +458,9 @@ int main_menu() {
 
 	sf::Text* focusedText = NULL;
 
+	bool mouseTemp = false;
+	bool keyboardTemp = false;
 
-	bool temp = false;
 
 	while (login.isOpen())
 	{
@@ -543,7 +473,7 @@ int main_menu() {
 		{
 			if (event.type == sf::Event::Closed)
 				login.close();
-			else if (event.type == sf::Event::TextEntered)		//ÅؽºƮ ÀԷÂ ±¸Çö
+			else if (event.type == sf::Event::TextEntered)		//텍스트 입력 구현
 			{
 				{
 					if (event.text.unicode < 128)
@@ -559,20 +489,20 @@ int main_menu() {
 								if (!pwInput.empty())
 									pwInput.pop_back();
 						}
-						else if (event.text.unicode != 13)
+						else if (event.text.unicode != 13 && event.text.unicode != 9)
 							if (focusedText == &idString)
 								idInput += static_cast<char>(event.text.unicode);
 							else if (focusedText == &pwString)
 								pwInput += static_cast<char>(event.text.unicode);
 					}
-					if (focusedText == &idString)			//ºñ¹ø: * ·Î º¸À̵µ·Ï ÇÔ
+					if (focusedText == &idString)			//비번은 * 로 보이도록 함
 						idString.setString(idInput);
 					else if (focusedText == &pwString)
 						pwString.setString(string(pwInput.length(), '*'));
 				}
 
 			}
-			else if (event.type == sf::Event::MouseButtonPressed)	//¾ ¹ڽº Ŭ¸¯ÀÎÁö »ö±ò·Î ±¸ºÐ
+			else if (event.type == sf::Event::MouseButtonPressed)	//어떤 박스 클릭인지 색깔로 구분
 			{
 
 
@@ -594,7 +524,7 @@ int main_menu() {
 					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
 						loginButton.setFillColor(sf::Color(220, 220, 220));
-						temp = true;
+						mouseTemp = true;
 					}
 				}
 				else if (registerButton.getGlobalBounds().contains(worldPos))
@@ -602,27 +532,50 @@ int main_menu() {
 					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
 						registerButton.setFillColor(sf::Color(220, 220, 220));
-						temp = true;
+						mouseTemp = true;
+
 					}
 				}
 				else
 				{
 					idBox.setOutlineColor(sf::Color::Black);
 					pwBox.setOutlineColor(sf::Color::Black);
+					focusedText = NULL;
 				}
 			}
-			//
+			else if (event.type == sf::Event::KeyPressed)
+			{
+				if (event.key.code == sf::Keyboard::Tab)
+				{
+					if (focusedText == &idString)
+					{
+						idBox.setOutlineColor(sf::Color::Black);
+						pwBox.setOutlineColor(sf::Color::Red);
+						focusedText = &pwString;
+					}
+					else
+					{
+						idBox.setOutlineColor(sf::Color::Red);
+						pwBox.setOutlineColor(sf::Color::Black);
+						focusedText = &idString;
+					}
+				}
+				else if (event.key.code == sf::Keyboard::Enter)
+				{
+					loginButton.setFillColor(sf::Color(220, 220, 220));
+					keyboardTemp = true;
+				}
+			}
 
 			if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-				if (temp) {
+				if (mouseTemp) {
 					if (loginButton.getGlobalBounds().contains(worldPos)) {
 						loginButton.setFillColor(sf::Color(240, 240, 240));
 						bool loginSuccess = login_menu(idInput, pwInput);
 						if (loginSuccess) {
 							login.close();
 							connect = true;
-							temp = false;
-							
+
 						}
 					}
 					else if (registerButton.getGlobalBounds().contains(worldPos)) {
@@ -630,15 +583,25 @@ int main_menu() {
 						if (reg == false) {
 							reg = true;
 							Register_menu();
-							
+
 						}
 					}
-					temp = false;
 				}
-
+				mouseTemp = false;
 			}
+			if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+				if (keyboardTemp) {
+					loginButton.setFillColor(sf::Color(240, 240, 240));
+					bool loginSuccess = login_menu(idInput, pwInput);
+					if (loginSuccess)
+					{
+						login.close();
+						connect = true;
 
-
+					}
+				}
+				keyboardTemp = false;
+			}
 		}
 
 		login.clear(sf::Color(218, 218, 218));
