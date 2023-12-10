@@ -155,19 +155,19 @@ bool Register_menu(const string& idInput, const string& pwInput, const string& c
 		string check_pwd;
 
 		account.set_ID(idInput);
-			account.set_PWD(pwInput);
-			user.set_ACCOUNT(account);
-			main_DB.append_User(user);
+		account.set_PWD(pwInput);
+		user.set_ACCOUNT(account);
+		main_DB.append_User(user);
 
-			string user_set = "\n"+idInput + " " + pwInput;
-			ofstream ofs;
-			ofs.open(USER_LIST, ios::app); // Open file in append mode
-			if (ofs.is_open()) {
-				ofs << user_set; // Use << operator to write string
-			}
-			ofs.close();
-			ofstream out(idInput+".txt");
-			cout << " add success";
+		string user_set = "\n" + idInput + " " + pwInput;
+		ofstream ofs;
+		ofs.open(USER_LIST, ios::app); // Open file in append mode
+		if (ofs.is_open()) {
+			ofs << user_set; // Use << operator to write string
+		}
+		ofs.close();
+		ofstream out(idInput + ".txt");
+		cout << " add success";
 	}
 }
 
@@ -246,149 +246,149 @@ int Register_menu() {
 
 	while (registerWindow.isOpen()) {
 
-			sf::Event event;
-			sf::Vector2i mousPos = sf::Mouse::getPosition(registerWindow);
-			sf::Vector2f worldPos = registerWindow.mapPixelToCoords(mousPos);
-			
+		sf::Event event;
+		sf::Vector2i mousPos = sf::Mouse::getPosition(registerWindow);
+		sf::Vector2f worldPos = registerWindow.mapPixelToCoords(mousPos);
 
-			while (registerWindow.pollEvent(event))
+
+		while (registerWindow.pollEvent(event))
+		{
+
+
+			if (event.type == sf::Event::Closed) {
+				registerWindow.close();
+				reg = false;
+			}
+			if (event.type == sf::Event::MouseButtonPressed)	//어떤 박스 클릭인지 색깔로 구분
 			{
-
-
-				if (event.type == sf::Event::Closed){
-					registerWindow.close();
-					reg = false;
-				}
-				if (event.type == sf::Event::MouseButtonPressed)	//어떤 박스 클릭인지 색깔로 구분
+				if (registerIdBox.getGlobalBounds().contains(worldPos))
 				{
-					if (registerIdBox.getGlobalBounds().contains(worldPos))
-					{
-						registerIdBox.setOutlineColor(sf::Color::Red);
-						registerPwBox.setOutlineColor(sf::Color::Black);
-						registerPwConfirmBox.setOutlineColor(sf::Color::Black);
-						focusedText = &registerIdString;
+					registerIdBox.setOutlineColor(sf::Color::Red);
+					registerPwBox.setOutlineColor(sf::Color::Black);
+					registerPwConfirmBox.setOutlineColor(sf::Color::Black);
+					focusedText = &registerIdString;
 
-					}
-					else if (registerPwBox.getGlobalBounds().contains(worldPos))
-					{
-						registerIdBox.setOutlineColor(sf::Color::Black);
-						registerPwBox.setOutlineColor(sf::Color::Red);
-						registerPwConfirmBox.setOutlineColor(sf::Color::Black);
-						focusedText = &registerPwString;
-					}
-					else if (registerPwConfirmBox.getGlobalBounds().contains(worldPos))
-					{
-						registerIdBox.setOutlineColor(sf::Color::Black);
-						registerPwBox.setOutlineColor(sf::Color::Black);
-						registerPwConfirmBox.setOutlineColor(sf::Color::Red);
-						focusedText = &registerPwConfirmString;
-					}
-					else if (confirmButton.getGlobalBounds().contains(worldPos))
-					{
-						if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-						{
-							confirmButton.setFillColor(sf::Color(220, 220, 220));
-							temp = true;
-						}
-					}
-					else
-					{
-						registerIdBox.setOutlineColor(sf::Color::Black);
-						registerPwBox.setOutlineColor(sf::Color::Black);
-						registerPwConfirmBox.setOutlineColor(sf::Color::Black);
-
-					}
 				}
-				else if (event.type == sf::Event::TextEntered)		//텍스트 입력 구현
+				else if (registerPwBox.getGlobalBounds().contains(worldPos))
 				{
+					registerIdBox.setOutlineColor(sf::Color::Black);
+					registerPwBox.setOutlineColor(sf::Color::Red);
+					registerPwConfirmBox.setOutlineColor(sf::Color::Black);
+					focusedText = &registerPwString;
+				}
+				else if (registerPwConfirmBox.getGlobalBounds().contains(worldPos))
+				{
+					registerIdBox.setOutlineColor(sf::Color::Black);
+					registerPwBox.setOutlineColor(sf::Color::Black);
+					registerPwConfirmBox.setOutlineColor(sf::Color::Red);
+					focusedText = &registerPwConfirmString;
+				}
+				else if (confirmButton.getGlobalBounds().contains(worldPos))
+				{
+					if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 					{
+						confirmButton.setFillColor(sf::Color(220, 220, 220));
+						temp = true;
+					}
+				}
+				else
+				{
+					registerIdBox.setOutlineColor(sf::Color::Black);
+					registerPwBox.setOutlineColor(sf::Color::Black);
+					registerPwConfirmBox.setOutlineColor(sf::Color::Black);
+
+				}
+			}
+			else if (event.type == sf::Event::TextEntered)		//텍스트 입력 구현
+			{
+				{
 
 
-						if (event.text.unicode < 128)
+					if (event.text.unicode < 128)
+					{
+						if (event.text.unicode == 8)
 						{
-							if (event.text.unicode == 8)
-							{
-								if (focusedText == &registerIdString){
-									if (!idInput.empty()) idInput.pop_back();
-								}
-								else if (focusedText == &registerPwString){
-									if (!pwInput.empty()) pwInput.pop_back();
-								}
-								else if (focusedText == &registerPwConfirmString){
-									if (!confirmPwInput.empty()) confirmPwInput.pop_back();
-								}
+							if (focusedText == &registerIdString) {
+								if (!idInput.empty()) idInput.pop_back();
 							}
-							else if (event.text.unicode != 13) {
-								if (focusedText == &registerIdString) {
-									idInput += static_cast<char>(event.text.unicode);
-									
-								}
-								else if (focusedText == &registerPwString) {
-									pwInput += static_cast<char>(event.text.unicode);
-									
-								}
-								else if (focusedText == &registerPwConfirmString) {
-									confirmPwInput += static_cast<char>(event.text.unicode);
-
-								}
+							else if (focusedText == &registerPwString) {
+								if (!pwInput.empty()) pwInput.pop_back();
 							}
-
+							else if (focusedText == &registerPwConfirmString) {
+								if (!confirmPwInput.empty()) confirmPwInput.pop_back();
+							}
 						}
-						if (focusedText == &registerIdString)	 registerIdString.setString(idInput);
-						else if (focusedText == &registerPwString) registerPwString.setString(string(pwInput.length(), '*'));
-						else if (focusedText == &registerPwConfirmString) registerPwConfirmString.setString(string(confirmPwInput.length(), '*'));
+						else if (event.text.unicode != 13) {
+							if (focusedText == &registerIdString) {
+								idInput += static_cast<char>(event.text.unicode);
+
+							}
+							else if (focusedText == &registerPwString) {
+								pwInput += static_cast<char>(event.text.unicode);
+
+							}
+							else if (focusedText == &registerPwConfirmString) {
+								confirmPwInput += static_cast<char>(event.text.unicode);
+
+							}
+						}
+
+					}
+					if (focusedText == &registerIdString)	 registerIdString.setString(idInput);
+					else if (focusedText == &registerPwString) registerPwString.setString(string(pwInput.length(), '*'));
+					else if (focusedText == &registerPwConfirmString) registerPwConfirmString.setString(string(confirmPwInput.length(), '*'));
+
+
+				}
+			}
+
+			if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+				if (temp) {
+					if (confirmButton.getGlobalBounds().contains(worldPos)) {
+						confirmButton.setFillColor(sf::Color(240, 240, 240));
+						if (pwInput != confirmPwInput) {
+							cout << "**Error: pwd and confirm pwd is not same**";
+						}
+						else {
+							bool RegisterSuccess = Register_menu(idInput, pwInput, confirmPwInput);
+							if (RegisterSuccess) {
+								registerWindow.close();
+								reg = false;
+								temp = false;
+							}
+						}
 
 
 					}
+					temp = false;
 				}
-				
-				if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-					if (temp) {
-						if (confirmButton.getGlobalBounds().contains(worldPos)) {
-							confirmButton.setFillColor(sf::Color(240, 240, 240));
-							if (pwInput != confirmPwInput) {
-								cout << "**Error: pwd and confirm pwd is not same**";
-							}
-							else {
-								bool RegisterSuccess = Register_menu(idInput, pwInput, confirmPwInput);
-								if (RegisterSuccess) {
-									registerWindow.close();
-									reg = false;
-									temp = false;
-								}
-							}
-
-							
-						}
-						temp = false;
-					}
-
-				}
-
 
 			}
 
-			registerWindow.clear(sf::Color(218, 218, 218));
-			registerWindow.draw(registerIdBox);
-			registerWindow.draw(registerIdText);
-			registerWindow.draw(registerIdString);
 
-			registerWindow.draw(registerPwBox);
-			registerWindow.draw(registerPwText);
-			registerWindow.draw(registerPwString);
-
-
-			registerWindow.draw(registerPwConfirmBox);
-			registerWindow.draw(registerPwConfirmText);
-			registerWindow.draw(registerPwConfirmString);
-
-			registerWindow.draw(confirmButton);
-			registerWindow.draw(confirmText);
-
-
-			registerWindow.display();
 		}
-	
+
+		registerWindow.clear(sf::Color(218, 218, 218));
+		registerWindow.draw(registerIdBox);
+		registerWindow.draw(registerIdText);
+		registerWindow.draw(registerIdString);
+
+		registerWindow.draw(registerPwBox);
+		registerWindow.draw(registerPwText);
+		registerWindow.draw(registerPwString);
+
+
+		registerWindow.draw(registerPwConfirmBox);
+		registerWindow.draw(registerPwConfirmText);
+		registerWindow.draw(registerPwConfirmString);
+
+		registerWindow.draw(confirmButton);
+		registerWindow.draw(confirmText);
+
+
+		registerWindow.display();
+	}
+
 }
 
 int main_menu() {
@@ -627,7 +627,7 @@ int main(void) {
 
 	if (connect)
 	{
-		
+
 		EXTERN_STUDENT_ID = STUDENT_ID;
 		schedule_main();
 	}
