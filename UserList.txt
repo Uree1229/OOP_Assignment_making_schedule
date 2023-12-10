@@ -2,5 +2,3 @@ root root
 ihduser ihduser
 iwduser iwduser
 root1 root1
-
-root2 root2
